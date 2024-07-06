@@ -1,5 +1,14 @@
-<script>
+<script lang="ts">
     export let names
+	let editVisibleUserId : string | null = null;
+
+	const updateEditFormVisibility = (userId:string) => {
+		if (editVisibleUserId === userId) {
+            editVisibleUserId = null; // Hide the form if it's already visible
+        } else {
+            editVisibleUserId = userId; // Show the form for the clicked user
+        }
+	}
 </script>
 
 <div
@@ -22,13 +31,68 @@
 						<p class="font-medium pl-5 text-gray-500 pt-0">{user.email}</p>                        
 					</div>
 				</div>
-                <form method="POST" action="/profiles?/delete">
-                <input type="hidden" name="id" id="id" value={user.id}>
-                <button type="submit">
-                    <img class="w-4 float-right" src="./trash-can.svg" alt="delete"/>
-                </button>
-                </form>
+				<div class="flex items-center gap-4">
+					<button on:click={() => updateEditFormVisibility(user.id)}>
+						<img class="w-4 float-right" src="./edit.svg" alt="edit"/>
+					</button>
+					<form method="POST" action="/profiles?/delete">
+					<input type="hidden" name="id" id="id" value={user.id}>
+					<button type="submit">
+						<img class="w-4 float-right" src="./trash-can.svg" alt="delete"/>
+					</button>
+					</form>
+				</div>
 			</div>
+			{#if editVisibleUserId === user.id}
+				<div class="pt-2">
+					<form method="POST" action="/profiles?/update">
+						<input type="hidden" name="id" value={user.id} />
+						<div class="flex flex-wrap -mx-3 mb-2">
+						  <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+							<label
+							  class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+							  for="grid-city"
+							>
+							  Name
+							</label>
+							<input
+							  class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+							  id="name"
+							  type="text"
+							  placeholder="Enter name"
+							  name="name"
+							/>
+						  </div>
+						  <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+							<label
+							  class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+							  for="grid-city"
+							>
+							  Email
+							</label>
+							<input
+							  class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+							  id="email"
+							  type="text"
+							  placeholder="Enter email"
+							  name="email"
+							/>
+						  </div>
+						  <!-- <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+								<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-state">
+								  Email
+								</label>
+							  </div> -->
+						  <button
+							type="submit"
+							class="bg-yellow-500 hover:bg-blue-700 text-white font-bold mt-5 ml-2 px-2 rounded "
+						  >
+							Update Applicant
+						  </button>
+						</div>
+					  </form>
+				</div>
+			{/if}
 		{/each}
 	</div>
 </div>
